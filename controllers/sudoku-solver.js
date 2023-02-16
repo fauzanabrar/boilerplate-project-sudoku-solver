@@ -1,3 +1,4 @@
+
 class SudokuSolver {
   
   constructor(){
@@ -108,109 +109,61 @@ class SudokuSolver {
     return true
   }
 
-  // solve(puzzleString) {
-  //   let row = 0
-  //   let column = 0
-  //   let solution = Array.from(puzzleString.slice())
-  //   let possibilities = []
-
-  //   while((/[.]/.test(solution.join('')))){
-      // for(let i = 0; i < solution.length; i++){
-      //   console.log(i, row, column, solution)
-      //   if(solution[i] == '.'){
-      //     for(let j = 1; j <= 9 ; j++){
-      //       if(
-      //         this.checkRowPlacement(solution, this.NumberToLetter[(row+1).toString()], (column+1).toString(), j) &&
-      //         this.checkColPlacement(solution, this.NumberToLetter[(row+1).toString()], (column+1).toString(), j) &&
-      //         this.checkRegionPlacement(solution, this.NumberToLetter[(row+1).toString()], (column+1).toString(), j) 
-      //       ){
-      //         console.log("why this is work?", this.NumberToLetter[(row+1).toString()], (column+1).toString(), j)
-              
-      //         possibilities.push(j)
-              
-      //       }
-      //     }
-      //     if(possibilities.length == 1){
-      //       solution[i] = possibilities[0]
-      //     }
-          
-      //     possibilities = []            
-      //   }
-
-      //   if(column == 8){
-      //     column = 0
-      //     row++
-      //   }else {
-      //     column++
-      //   }
-
-      // }
-  //     row = 0
-  //     column = 0
-      
-
-  //   }
-  //   solution = solution.join('')
-
-  //   return {
-  //     solution
-  //   }
-  // }
 
   solve(puzzleString){
-    let solution = Array.from(puzzleString.slice())
-    let possibilities = []
-    let allPossibilities = []
+    let puzzleArr = []
+    let isEmpty = true
+
+    for(let i = 1; i<=9; i++){
+      puzzleArr.push(Array.from(puzzleString).splice((i-1)*9,9))
+    }
+
 
     let row = 0
     let column = 0
-    console.log("runn", puzzleString)
+    let solution = puzzleString
 
-    for(let i = 0; i < solution.length; i++){
-      if(solution[i] == '.'){
-        for(let j = 1; j <= 9 ; j++){
-          let row2 = this.NumberToLetter[(row+1).toString()]
-          let column2 = (column+1).toString()
-          if(
-            this.checkRowPlacement(solution, row2 , column2 , j) &&
-            this.checkColPlacement(solution, row2, column2, j) &&
-            this.checkRegionPlacement(solution, row2, column2, j) 
-          ){
-            possibilities.push(j.toString())
-            
-          }
-
+    for(let i = 0; i < 9 ; i++){
+      for(let j = 0; j < 9; j++){
+        if(puzzleArr[i][j] == "."){
+          row = i;
+          column = j;
+          isEmpty = false
+          break
         }
-          allPossibilities.push([...possibilities, i])
-          if(possibilities.length ==1){
-            solution[i] = possibilities[0]
-            i = 0
-            row = 0
-            column = 0
-            allPossibilities = []
+      }
+      if(!isEmpty) break
+    }
+
+    if(isEmpty){
+      return {solution}
+    }
+
+    for(let num = 1; num <= 9; num++){
+      let row2 = this.NumberToLetter[(row + 1).toString()]
+      let column2 = (column + 1).toString()
+
+      if(
+        this.checkRowPlacement(solution, row2, column2, num) &&
+        this.checkColPlacement(solution, row2, column2, num) &&
+        this.checkRegionPlacement(solution, row2, column2, num) 
+        ){
+          puzzleArr[row][column] = num
+          solution = puzzleArr.join('').replaceAll(',','')
+          
+          let result = this.solve(solution)
+
+          if(result.hasOwnProperty('solution')){
+            return result          
           }
 
-          possibilities = []
-      }
-
-
-      if(column == 8){
-        column = 0
-        row++
-      }else {
-        column++
+          puzzleArr[row][column] = '.'
+  
       }
 
     }
-    console.log(allPossibilities, solution)
-
-    // if(/[.]/.test(solution)){
-    //   return false
-    // }
-
-    return {
-      solution
-    }
+    
+    return false
   }
 }
 
