@@ -32,7 +32,7 @@ module.exports = function (app) {
       }
 
       let conflict = []
-      const row = coordinate[0]
+      const row = coordinate[0].toUpperCase()
       const col = coordinate[1]
 
       if(!solver.checkRowPlacement(puzzleString, row, col, value)){

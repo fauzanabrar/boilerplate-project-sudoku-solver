@@ -12,6 +12,18 @@ class SudokuSolver {
       "H": 8,
       "I": 9,
     }
+    this.NumberToLetter = {
+      "1": "A",
+      "2": "B",
+      "3": "C",
+      "4": "D",
+      "5": "E",
+      "6": "F",
+      "7": "G",
+      "8": "H",
+      "9": "I",
+    }
+    this.deep = 0
   }
 
   validate(puzzleString) {
@@ -42,12 +54,11 @@ class SudokuSolver {
   checkRowPlacement(puzzleString, row, column, value) {
     row = this.letterToNumber[row]
     let clone = (puzzleString).slice();
-    let rowPuzzle = Array.from(clone).splice((row-1)*0, (row-1)*0 + 9)
+    let rowPuzzle = Array.from(clone).splice((row-1)*9, 9)
     
     let pattern = new RegExp(`${value}`)
-
     if(pattern.test(rowPuzzle.join(''))){
-      console.log("row false");
+      // console.log("row false");
       return false
     }
     return true
@@ -64,7 +75,7 @@ class SudokuSolver {
     let pattern = new RegExp(`${value}`)
 
     if(pattern.test(colPuzzle.join(''))){
-      console.log("col false");
+      // console.log("col false");
       return false
     }
 
@@ -91,30 +102,95 @@ class SudokuSolver {
 
     let pattern = new RegExp(`${value}`)
     if(pattern.test(regionPuzzle.join(''))){
-      console.log("region false");
+      // console.log("region false");
       return false
     }
     return true
   }
 
-  solve(puzzleString) {
+  // solve(puzzleString) {
+  //   let row = 0
+  //   let column = 0
+  //   let solution = Array.from(puzzleString.slice())
+  //   let possibilities = []
+
+  //   while((/[.]/.test(solution.join('')))){
+      // for(let i = 0; i < solution.length; i++){
+      //   console.log(i, row, column, solution)
+      //   if(solution[i] == '.'){
+      //     for(let j = 1; j <= 9 ; j++){
+      //       if(
+      //         this.checkRowPlacement(solution, this.NumberToLetter[(row+1).toString()], (column+1).toString(), j) &&
+      //         this.checkColPlacement(solution, this.NumberToLetter[(row+1).toString()], (column+1).toString(), j) &&
+      //         this.checkRegionPlacement(solution, this.NumberToLetter[(row+1).toString()], (column+1).toString(), j) 
+      //       ){
+      //         console.log("why this is work?", this.NumberToLetter[(row+1).toString()], (column+1).toString(), j)
+              
+      //         possibilities.push(j)
+              
+      //       }
+      //     }
+      //     if(possibilities.length == 1){
+      //       solution[i] = possibilities[0]
+      //     }
+          
+      //     possibilities = []            
+      //   }
+
+      //   if(column == 8){
+      //     column = 0
+      //     row++
+      //   }else {
+      //     column++
+      //   }
+
+      // }
+  //     row = 0
+  //     column = 0
+      
+
+  //   }
+  //   solution = solution.join('')
+
+  //   return {
+  //     solution
+  //   }
+  // }
+
+  solve(puzzleString){
+    let solution = Array.from(puzzleString.slice())
+    let possibilities = []
+
     let row = 0
     let column = 0
-    let solution = ''
-    for(let i of puzzleString){
-      if(i == '.'){
+    console.log("runn", puzzleString)
+
+    for(let i = 0; i < solution.length; i++){
+      if(solution[i] == '.'){
         for(let j = 1; j <= 9 ; j++){
+          let row2 = this.NumberToLetter[(row+1).toString()]
+          let column2 = (column+1).toString()
           if(
-            this.checkRowPlacement(puzzleString, row, column, j) &&
-            this.checkColPlacement(puzzleString, row, column, j) &&
-            this.checkRegionPlacement(puzzleString, row, column, j) 
+            this.checkRowPlacement(solution, row2 , column2 , j) &&
+            this.checkColPlacement(solution, row2, column2, j) &&
+            this.checkRegionPlacement(solution, row2, column2, j) 
           ){
-            solution += j
+            possibilities.push(j.toString())
           }
+
         }
-      }else {
-        solution += i
+
+          if(possibilities.length ==1){
+            solution[i] = possibilities[0]
+            i = 0
+            row = 0
+            column = 0
+          }
+
+          possibilities = []
       }
+
+
       if(column == 8){
         column = 0
         row++
@@ -123,6 +199,11 @@ class SudokuSolver {
       }
 
     }
+    console.log(possibilities, solution)
+
+    // if(/[.]/.test(solution)){
+    //   return false
+    // }
 
     return {
       solution
