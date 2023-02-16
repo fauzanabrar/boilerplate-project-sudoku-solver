@@ -160,6 +160,7 @@ class SudokuSolver {
   solve(puzzleString){
     let solution = Array.from(puzzleString.slice())
     let possibilities = []
+    let allPossibilities = []
 
     let row = 0
     let column = 0
@@ -176,15 +177,17 @@ class SudokuSolver {
             this.checkRegionPlacement(solution, row2, column2, j) 
           ){
             possibilities.push(j.toString())
+            
           }
 
         }
-
+          allPossibilities.push([...possibilities, i])
           if(possibilities.length ==1){
             solution[i] = possibilities[0]
             i = 0
             row = 0
             column = 0
+            allPossibilities = []
           }
 
           possibilities = []
@@ -199,7 +202,7 @@ class SudokuSolver {
       }
 
     }
-    console.log(possibilities, solution)
+    console.log(allPossibilities, solution)
 
     // if(/[.]/.test(solution)){
     //   return false
