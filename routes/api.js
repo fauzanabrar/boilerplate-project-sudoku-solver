@@ -13,6 +13,14 @@ module.exports = function (app) {
       const puzzleString = req.body.puzzle
       const value = req.body.value
 
+      for(let i of [coordinate, puzzleString, value]){
+        if(i == undefined ){
+          res.json({
+            error: "Required field(s) missing"
+          })
+        }
+      }
+
       const validatePuzzle = solver.validate(puzzleString)
 
       if(!validatePuzzle.valid){
@@ -34,6 +42,12 @@ module.exports = function (app) {
       let conflict = []
       const row = coordinate[0].toUpperCase()
       const col = coordinate[1]
+
+      if(!/[A-I]/.test(row) || !/[1-9]/.test(col)){
+        return res.json({
+          error: "Invalid coordinate"
+        })
+      }
 
       if(!solver.checkRowPlacement(puzzleString, row, col, value)){
         conflict.push('row')
@@ -63,11 +77,15 @@ module.exports = function (app) {
   app.route('/api/solve')
     .post((req, res) => {
       const puzzleString = req.body.puzzle 
-      
+
       const validatePuzzle = solver.validate(puzzleString)
 
       if(validatePuzzle.valid){
-        return res.json(solver.solve(puzzleString))
+        let result = solver.solve(puzzleString)
+        if(result.hasOwnProperty('solution')) return res.json(result)
+        return res.json({
+          error: "Puzzle cannot be solved"
+        })
       }
       
       res.json(validatePuzzle)

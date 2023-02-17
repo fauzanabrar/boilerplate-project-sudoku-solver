@@ -29,9 +29,9 @@ class SudokuSolver {
 
   validate(puzzleString) {
 
-    if(puzzleString == ''){
+    if(puzzleString == '' || puzzleString == undefined){
       return {
-        error: "Required field(s) missing"
+        error: "Required field missing"
       }
     }
     
@@ -57,6 +57,10 @@ class SudokuSolver {
     let clone = (puzzleString).slice();
     let rowPuzzle = Array.from(clone).splice((row-1)*9, 9)
     
+    if(rowPuzzle[column-1] == value){
+      return true
+    }
+
     let pattern = new RegExp(`${value}`)
     if(pattern.test(rowPuzzle.join(''))){
       // console.log("row false");
@@ -71,6 +75,10 @@ class SudokuSolver {
     
     for(let i = 0; i<9; i++){
       colPuzzle.push(puzzleString[i*9+ Number(column)-1])
+    }
+
+    if(colPuzzle[row-1] == value){
+      return true
     }
 
     let pattern = new RegExp(`${value}`)
@@ -101,7 +109,12 @@ class SudokuSolver {
       }
     }
 
+    if(regionPuzzle[(((row - ((Math.ceil(row / 3) - 1) * 3 )) - 1) * 3 + (column - ((Math.ceil(column / 3) - 1) * 3)))-1] == value){
+      return true
+    }
+
     let pattern = new RegExp(`${value}`)
+
     if(pattern.test(regionPuzzle.join(''))){
       // console.log("region false");
       return false
